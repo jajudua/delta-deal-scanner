@@ -22,16 +22,7 @@ jobs:
           python-version: '3.11'
       
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-      
-      - name: Download previous alerts
-        uses: actions/download-artifact@v4
-        with:
-          name: delta-deal-alerts
-          path: .
-        continue-on-error: true
+        run: pip install requests
       
       - name: 🎯 Scan for Delta ATL deals and send email
         env:
@@ -39,11 +30,3 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
         run: python delta_deal_scanner.py
-      
-      - name: Upload alerts for next run
-        uses: actions/upload-artifact@v4
-        with:
-          name: delta-deal-alerts
-          path: /tmp/delta_deals.json
-          retention-days: 7
-        continue-on-error: true
