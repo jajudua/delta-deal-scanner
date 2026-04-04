@@ -2,7 +2,6 @@ name: Delta ATL Deal Scanner - 4x Daily with Email
 
 on:
   schedule:
-    # 9 AM, 1 PM, 6 PM, 10 PM UTC
     - cron: '0 9 * * *'
     - cron: '0 13 * * *'
     - cron: '0 18 * * *'
@@ -28,7 +27,7 @@ jobs:
           pip install requests
       
       - name: Download previous alerts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: delta-deal-alerts
           path: .
@@ -42,7 +41,7 @@ jobs:
         run: python delta_deal_scanner.py
       
       - name: Upload alerts for next run
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: delta-deal-alerts
           path: /tmp/delta_deals.json
