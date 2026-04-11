@@ -1,32 +1,41 @@
-name: Delta ATL Deal Scanner - 4x Daily with Email
+name: Delta ATL International Scanner - Weekly
 
 on:
   schedule:
-    - cron: '0 9 * * *'
-    - cron: '0 13 * * *'
-    - cron: '0 18 * * *'
-    - cron: '0 22 * * *'
-  workflow_dispatch:
+    # Tuesday at 10 AM UTC (6 AM ET) - airlines release deals early in the week
+    - cron: '0 10 * * 2'
+  workflow_dispatch:  # Manual trigger anytime
+
+permissions:
+  contents: write  # Needed to commit dashboard.html back to repo
 
 jobs:
   scan-and-alert:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: pip install requests
-      
-      - name: 🎯 Scan for Delta ATL deals and send email
+
+      - name: Scan 60+ Delta ATL nonstop routes for deals
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
         run: python delta_deal_scanner.py
+
+      - name: Commit dashboard and scan results
+        run: |
+          git config user.name "Delta Scanner Bot"
+          git config user.email "scanner@delta-deals.bot"
+          git add dashboard.html scan_results.json || true
+          git diff --cached --quiet || git commit -m "Update dashboard - $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push || echo "Nothing to push"
