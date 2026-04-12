@@ -160,7 +160,7 @@ def search_flights(origin, destination, departure_date, return_date):
         "arrival_id": destination,
         "outbound_date": departure_date,
         "return_date": return_date,
-        "type": "2",
+        "type": "1",  # 1 = Round trip (SerpAPI default)
         "api_key": SERPAPI_KEY,
     }
     try:
@@ -172,16 +172,18 @@ def search_flights(origin, destination, departure_date, return_date):
         return None
 
 def is_nonstop_delta(flight):
+    """Check if a flight result is nonstop Delta.
+    SerpAPI structure: each item in best_flights/other_flights has a 'flights' array
+    of segments. Nonstop = exactly 1 segment. Delta = airline name contains 'Delta'.
+    """
     try:
-        airline = flight.get("airline", "")
-        if "Delta" not in airline:
+        segments = flight.get("flights", [])
+        # Nonstop means exactly 1 segment in the outbound
+        if len(segments) != 1:
             return False
-        stops = flight.get("stops", None)
-        if stops is None:
-            segments = flight.get("segments", [])
-            if len(segments) > 1:
-                return False
-        elif stops > 0:
+        # Check airline on the segment
+        airline = segments[0].get("airline", "")
+        if "Delta" not in airline:
             return False
         return True
     except Exception:
