@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Delta ATL Deal Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#0a0e1a;color:#e0e0e0;min-height:100vh}
+.hdr{background:linear-gradient(135deg,#0d1b2a,#1b2838,#0d1b2a);border-bottom:1px solid rgba(255,255,255,.06);padding:32px 24px;text-align:center}
+.hdr-label{font-size:11px;color:#4a9eff;letter-spacing:3px;text-transform:uppercase;font-weight:500}
+.hdr-title{font-size:32px;font-weight:700;color:#fff;margin-top:8px}
+.hdr-sub{font-size:13px;color:#6b7b8d;margin-top:6px}
+.stats{display:flex;justify-content:center;background:#0f1520;border-bottom:1px solid rgba(255,255,255,.04);flex-wrap:wrap}
+.st{padding:20px 32px;text-align:center;border-right:1px solid rgba(255,255,255,.04);min-width:120px}
+.st:last-child{border-right:none}
+.st-v{font-size:32px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.st-l{font-size:10px;color:#5a6a7a;text-transform:uppercase;letter-spacing:1.5px;margin-top:4px}
+.blue{color:#4a9eff}.red{color:#ff4444}.green{color:#44cc66}.yellow{color:#ffcc00}
+.wrap{max-width:1100px;margin:0 auto;padding:24px}
+.sec-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sec-title.red{color:#ff4444;border-color:#ff4444}.sec-title.green{color:#44cc66;border-color:#44cc66}.sec-title.blue{color:#4a9eff;border-color:#4a9eff}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.card{background:#141c2b;border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.15)}
+.card.mk{border-color:rgba(255,68,68,.3)}.card.mk:hover{border-color:rgba(255,68,68,.6)}
+.cbadge{padding:6px 16px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.cbadge.mk{background:#ff4444;color:#fff}.cbadge.dl{background:#1a3d1a;color:#44cc66}
+.cbody{padding:16px 20px 20px;display:flex;justify-content:space-between;align-items:flex-start}
+.croute{font-size:11px;color:#5a6a7a}.cdest{font-size:20px;font-weight:700;color:#fff;margin-top:2px}
+.cname{font-size:13px;color:#7a8a9a;margin-top:2px}.cdate{font-size:12px;color:#5a6a7a;margin-top:8px}
+.cprice{text-align:right}.cpv{font-size:32px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.cpv.red{color:#ff4444}.cpv.green{color:#44cc66}.cpl{font-size:10px;color:#5a6a7a;text-transform:uppercase}
+.cbook{display:inline-block;margin-top:10px;padding:6px 14px;font-size:11px;font-weight:700;text-decoration:none;border-radius:6px;text-transform:uppercase;letter-spacing:.5px}
+.cbook.mk{background:#ff4444;color:#fff}.cbook.dl{background:#1a3d1a;color:#44cc66;border:1px solid #44cc66}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.rcard{background:#141c2b;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:16px}
+.rname{font-size:13px;font-weight:600;color:#8a9aaa}.rdetail{font-size:12px;color:#5a6a7a;margin-top:4px}
+.rdeals{font-size:20px;font-weight:700;color:#44cc66;margin-top:8px;font-family:'JetBrains Mono',monospace}.rdeals.none{color:#3a4a5a}
+.ttable{width:100%;border-collapse:collapse;margin-top:12px}
+.ttable th,.ttable td{padding:8px 12px;text-align:left;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
+.ttable th{color:#5a6a7a;font-size:10px;text-transform:uppercase;letter-spacing:1px}.ttable td{color:#8a9aaa}
+.footer{text-align:center;padding:32px;font-size:11px;color:#3a4a5a;border-top:1px solid rgba(255,255,255,.04);margin-top:40px}
+.footer a{color:#4a9eff;text-decoration:none}
+@media(max-width:600px){.cards{grid-template-columns:1fr}.rgrid{grid-template-columns:1fr 1fr}.stats{flex-wrap:wrap}.st{flex:1;min-width:50%}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-label">Weekly Scan Report</div>
+  <div class="hdr-title">Delta ATL Deal Scanner</div>
+  <div class="hdr-sub">April 12, 2026 at 03:45 PM UTC &middot; 60 nonstop international routes</div>
+</div>
+<div class="stats">
+  <div class="st"><div class="st-v blue">60</div><div class="st-l">Routes Scanned</div></div>
+  <div class="st"><div class="st-v yellow">180</div><div class="st-l">API Calls</div></div>
+  <div class="st"><div class="st-v red">0</div><div class="st-l">Mistake Fares</div></div>
+  <div class="st"><div class="st-v green">0</div><div class="st-l">Great Deals</div></div>
+</div>
+<div class="wrap">
+
+    <div style="text-align:center;padding:60px 20px;color:#5a6a7a;">
+        <div style="font-size:48px;margin-bottom:16px;">&#x1f4ed;</div>
+        <div style="font-size:18px;color:#7a8a9a;">No deals found this week</div>
+        <div style="font-size:13px;margin-top:8px;">All 60 routes scanned. Prices above thresholds.</div>
+        <div style="font-size:13px;margin-top:4px;">Next scan: Tuesday 6 AM ET</div>
+    </div>
+
+<div class="sec-title blue">REGION OVERVIEW</div>
+<div class="rgrid">
+
+        <div class="rcard">
+            <div class="rname">Caribbean</div>
+            <div class="rdetail">17 routes &middot; Deal &lt; $350</div>
+            <div class="rdeals none">0 deals</div>
+        </div>
+
+        <div class="rcard">
+            <div class="rname">Mexico</div>
+            <div class="rdetail">7 routes &middot; Deal &lt; $300</div>
+            <div class="rdeals none">0 deals</div>
+        </div>
+
+        <div class="rcard">
+            <div class="rname">Central America</div>
+            <div class="rdetail">5 routes &middot; Deal &lt; $350</div>
+            <div class="rdeals none">0 deals</div>
+        </div>
+
+        <div class="rcard">
+            <div class="rname">South America</div>
+            <div class="rdetail">7 routes &middot; Deal &lt; $550</div>
+            <div class="rdeals none">0 deals</div>
+        </div>
+
+        <div class="rcard">
+            <div class="rname">Canada</div>
+            <div class="rdetail">6 routes &middot; Deal &lt; $250</div>
+            <div class="rdeals none">0 deals</div>
+        </div>
+
+        <div class="rcard">
+            <div class="rname">Europe</div>
+            <div class="rdetail">12 routes &middot; Deal &lt; $650</div>
+            <div class="rdeals none">0 deals</div>
+        </div>
+
+        <div class="rcard">
+            <div class="rname">Africa</div>
+            <div class="rdetail">3 routes &middot; Deal &lt; $800</div>
+            <div class="rdeals none">0 deals</div>
+        </div>
+
+        <div class="rcard">
+            <div class="rname">Middle East</div>
+            <div class="rdetail">2 routes &middot; Deal &lt; $800</div>
+            <div class="rdeals none">0 deals</div>
+        </div>
+
+        <div class="rcard">
+            <div class="rname">Asia</div>
+            <div class="rdetail">1 routes &middot; Deal &lt; $800</div>
+            <div class="rdeals none">0 deals</div>
+        </div>
+
+</div>
+<div class="sec-title blue">PRICE THRESHOLDS (ROUNDTRIP MAIN CABIN)</div>
+<table class="ttable">
+<tr><th>Region</th><th>Deal Under</th><th>Mistake Under</th></tr>
+<tr><td>Canada</td><td>$250</td><td>$130</td></tr>
+<tr><td>Mexico</td><td>$300</td><td>$180</td></tr>
+<tr><td>Caribbean</td><td>$350</td><td>$200</td></tr>
+<tr><td>Central America</td><td>$350</td><td>$200</td></tr>
+<tr><td>South America</td><td>$550</td><td>$350</td></tr>
+<tr><td>Europe</td><td>$650</td><td>$400</td></tr>
+<tr><td>Africa</td><td>$800</td><td>$500</td></tr>
+<tr><td>Middle East</td><td>$800</td><td>$500</td></tr>
+<tr><td>Asia</td><td>$800</td><td>$500</td></tr>
+
+</table>
+<div class="footer">
+  Delta ATL Nonstop Scanner &middot; SerpAPI + GitHub Actions<br>
+  Prices roundtrip Main Cabin &middot; <a href="https://www.delta.com">delta.com</a><br>
+  Scans weekly on Tuesdays at 6 AM ET
+</div>
+</div>
+</body></html>
